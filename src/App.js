@@ -27,22 +27,32 @@ const App = () => {
   }, [scripts]);
 
   const addData = (newItem) => {
-    const newItemWithId = { ...newItem, id: Date.now() }; // Ensure unique ID
-    setData((prevData) => [...prevData, newItemWithId]);
+    setData((prevData) => [...prevData, newItem]);
   };
 
   const addScript = (newScript) => {
-    const newScriptWithId = { ...newScript, id: Date.now() }; // Ensure unique ID
-    setScripts((prevScripts) => [...prevScripts, newScriptWithId]);
+    setScripts((prevScripts) => [...prevScripts, newScript]);
   };
 
   const deleteData = (id) => {
     setData((prevData) => prevData.filter((item) => item.id !== id));
   };
 
-  const deleteScript = (id) => {
+  const editData = (id, updatedData) => {
+    setData((prevData) =>
+      prevData.map((item) => (item.id === id ? updatedData : item))
+    );
+  };
+
+  const deleteScript = (index) => {
+    setScripts((prevScripts) => prevScripts.filter((_, i) => i !== index));
+  };
+
+  const updateScript = (id, updatedData) => {
     setScripts((prevScripts) =>
-      prevScripts.filter((script) => script.id !== id)
+      prevScripts.map((script, index) =>
+        index === id ? { ...script, ...updatedData } : script
+      )
     );
   };
 
@@ -62,7 +72,9 @@ const App = () => {
             />
             <Route
               path="/timeline"
-              element={<Timeline data={data} setData={setData} />}
+              element={
+                <Timeline data={data} onEdit={editData} onDelete={deleteData} />
+              }
             />
             <Route
               path="/story-script"
@@ -72,6 +84,7 @@ const App = () => {
                   <StoryScriptList
                     scripts={scripts}
                     deleteScript={deleteScript}
+                    updateScript={updateScript}
                   />
                 </>
               }

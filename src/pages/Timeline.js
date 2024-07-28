@@ -3,7 +3,6 @@ import DataTable from "react-data-table-component";
 import { Button, Badge, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
 import { FaEye, FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
 
-// Helper function to render status badge
 const statusBadge = (status) => {
   let variant;
   switch (status) {
@@ -22,19 +21,75 @@ const statusBadge = (status) => {
   return <Badge bg={variant}>{status}</Badge>;
 };
 
-const Timeline = ({ data, setData }) => {
+const actionButtons = (row, isEditing, onEdit, onSave, onCancel, onDelete) => (
+  <>
+    {isEditing ? (
+      <>
+        <OverlayTrigger placement="top" overlay={<Tooltip>Simpan</Tooltip>}>
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0 me-2"
+            onClick={() => onSave(row.id)}
+          >
+            <FaSave />
+          </Button>
+        </OverlayTrigger>
+        <OverlayTrigger placement="top" overlay={<Tooltip>Batal</Tooltip>}>
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0"
+            onClick={() => onCancel()}
+          >
+            <FaTimes />
+          </Button>
+        </OverlayTrigger>
+      </>
+    ) : (
+      <>
+        <OverlayTrigger placement="top" overlay={<Tooltip>Lihat</Tooltip>}>
+          <Button variant="link" size="sm" className="p-0 me-2">
+            <FaEye />
+          </Button>
+        </OverlayTrigger>
+        <OverlayTrigger placement="top" overlay={<Tooltip>Edit</Tooltip>}>
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0 me-2"
+            onClick={() => onEdit(row.id)}
+          >
+            <FaEdit />
+          </Button>
+        </OverlayTrigger>
+        <OverlayTrigger placement="top" overlay={<Tooltip>Hapus</Tooltip>}>
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0"
+            onClick={() => onDelete(row.id)}
+          >
+            <FaTrash />
+          </Button>
+        </OverlayTrigger>
+      </>
+    )}
+  </>
+);
+
+const Timeline = ({ data, onEdit, onDelete }) => {
   const [editRowId, setEditRowId] = useState(null);
   const [editData, setEditData] = useState({});
 
-  const handleEdit = (row) => {
-    setEditRowId(row.id);
-    setEditData({ ...row });
+  const handleEdit = (id) => {
+    setEditRowId(id);
+    const item = data.find((item) => item.id === id);
+    setEditData({ ...item });
   };
 
-  const handleSave = () => {
-    setData((prevData) =>
-      prevData.map((item) => (item.id === editData.id ? editData : item))
-    );
+  const handleSave = (id) => {
+    onEdit(id, editData);
     setEditRowId(null);
   };
 
@@ -114,9 +169,9 @@ const Timeline = ({ data, setData }) => {
             value={editData.status}
             onChange={(e) => handleChange(e, "status")}
           >
-            <option value="InProgress">Sedang Berjalan</option>
-            <option value="In-Waiting">Menunggu</option>
-            <option value="Completed">Selesai</option>
+            <option value="InProgress">InProgress</option>
+            <option value="In-Waiting">In-Waiting</option>
+            <option value="Completed">Completed</option>
           </Form.Select>
         ) : (
           statusBadge(row.status)
@@ -124,103 +179,117 @@ const Timeline = ({ data, setData }) => {
       sortable: true,
     },
     {
+      name: "Catatan",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Control
+            type="text"
+            value={editData.catatan}
+            onChange={(e) => handleChange(e, "catatan")}
+          />
+        ) : (
+          row.catatan
+        ),
+      sortable: true,
+    },
+    {
+      name: "Hasil Akhir",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Control
+            type="text"
+            value={editData.hasilakhir}
+            onChange={(e) => handleChange(e, "hasilakhir")}
+          />
+        ) : (
+          row.hasilakhir
+        ),
+      sortable: true,
+    },
+    {
+      name: "Dibuat Oleh",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Control
+            type="text"
+            value={editData.dibuatoleh}
+            onChange={(e) => handleChange(e, "dibuatoleh")}
+          />
+        ) : (
+          row.dibuatoleh
+        ),
+      sortable: true,
+    },
+    {
       name: "Aksi",
       cell: (row) =>
-        editRowId === row.id ? (
-          <>
-            <OverlayTrigger placement="top" overlay={<Tooltip>Simpan</Tooltip>}>
-              <Button
-                style={{
-                  marginRight: "5px",
-                  fontSize: 14,
-                }}
-                variant="success"
-                size="sm"
-                className="p-0 me-2"
-                onClick={handleSave}
-              >
-                <FaSave style={{ color: "green" }} />
-                Simpan
-              </Button>
-            </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={<Tooltip>Batal</Tooltip>}>
-              <Button
-                style={{
-                  marginRight: "5px",
-                  fontSize: 14,
-                }}
-                variant="danger"
-                size="sm"
-                className="p-0"
-                onClick={handleCancel}
-              >
-                <FaTimes style={{ color: "red" }} />
-                Batal
-              </Button>
-            </OverlayTrigger>
-          </>
-        ) : (
-          <>
-            <OverlayTrigger placement="top" overlay={<Tooltip>Lihat</Tooltip>}>
-              <Button
-                style={{
-                  marginRight: "5px",
-                  fontSize: 14,
-                }}
-                variant="info"
-                size="sm"
-                className="p-0 me-2"
-                onClick={() => console.log("Lihat", row.id)}
-              >
-                <FaEye style={{ color: "blue" }} />
-                Lihat
-              </Button>
-            </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={<Tooltip>Edit</Tooltip>}>
-              <Button
-                style={{
-                  marginRight: "5px",
-                  fontSize: 14,
-                }}
-                variant="warning"
-                size="sm"
-                className="p-0 me-2"
-                onClick={() => handleEdit(row)}
-              >
-                <FaEdit style={{ color: "yellow" }} />
-                Edit
-              </Button>
-            </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={<Tooltip>Hapus</Tooltip>}>
-              <Button
-                style={{
-                  marginRight: "5px",
-                  fontSize: 14,
-                }}
-                variant="dark"
-                size="sm"
-                className="p-0"
-                onClick={() => console.log("Hapus", row.id)}
-              >
-                <FaTrash style={{ color: "black" }} />
-                Hapus
-              </Button>
-            </OverlayTrigger>
-          </>
+        actionButtons(
+          row,
+          editRowId === row.id,
+          handleEdit,
+          handleSave,
+          handleCancel,
+          onDelete
         ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
     },
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      pagination
-      highlightOnHover
-      pointerOnHover
-      responsive
-    />
+    <div className="container mt-4">
+      <h2 className="text-center mb-4" style={styles.heading}>
+        Timeline Project Animasi
+      </h2>
+      <DataTable
+        columns={columns}
+        data={data}
+        pagination
+        highlightOnHover
+        pointerOnHover
+        dense
+        customStyles={customStyles}
+      />
+    </div>
   );
+};
+
+const styles = {
+  heading: {
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    fontSize: "28px",
+    fontWeight: "bold",
+    color: "#333",
+  },
+};
+
+const customStyles = {
+  rows: {
+    style: {
+      minHeight: "50px",
+      "&:nth-of-type(even)": {
+        backgroundColor: "#f9f9f9",
+      },
+    },
+  },
+  headCells: {
+    style: {
+      fontSize: "16px",
+      fontWeight: "bold",
+      backgroundColor: "#f5f5f5",
+      color: "#333",
+      paddingLeft: "16px",
+      paddingRight: "16px",
+    },
+  },
+  cells: {
+    style: {
+      fontSize: "14px",
+      paddingLeft: "16px",
+      paddingRight: "16px",
+    },
+  },
 };
 
 export default Timeline;
