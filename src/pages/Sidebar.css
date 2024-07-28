@@ -1,0 +1,89 @@
+/* Sidebar.css */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #333333; /* Dark background */
+  color: #ffffff; /* Light text */
+  transition: width 0.3s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: width 0.3s;
+  overflow-x: hidden;
+}
+
+.sidebar.closed {
+  width: 80px;
+}
+
+.sidebar .toggle-btn {
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  margin: 10px;
+  font-size: 20px;
+}
+
+.sidebar .logo {
+  text-align: center;
+  padding: 10px;
+}
+
+.sidebar .logo img {
+  width: 60px;
+  height: auto;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+}
+
+.sidebar ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  transition: background-color 0.3s;
+}
+
+.sidebar ul li a:hover {
+  background-color: #444444; /* Slightly lighter gray for hover effect */
+  border-radius: 4px;
+}
+
+.sidebar ul li a svg {
+  margin-right: 10px;
+}
+
+.sidebar ul li a.active {
+  background-color: #555555; /* Even lighter gray for active link */
+}
+
+.sidebar.open ul li a span {
+  display: inline;
+}
+
+.sidebar.closed ul li a span {
+  display: none;
+}
+
+.sidebar.closed ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar.closed ul li a {
+  justify-content: center;
+}
+
+.sidebar.closed ul li a svg {
+  margin-right: 0;
+}

@@ -1,0 +1,13 @@
+/* src/App.css */
+.timeline-form {
+  margin-bottom: 20px;
+}
+
+.timeline-table {
+  margin-top: 20px;
+}
+
+thead th {
+  background-color: #343a40;
+  color: #fff;
+}
