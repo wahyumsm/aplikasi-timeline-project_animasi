@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { Button, Badge, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
-import { FaEye, FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
+import {
+  FaEye,
+  FaEdit,
+  FaTrash,
+  FaSave,
+  FaTimes,
+  FaFilePdf,
+} from "react-icons/fa";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const statusBadge = (status) => {
   let variant;
@@ -102,6 +111,37 @@ const Timeline = ({ data, onEdit, onDelete }) => {
       ...editData,
       [field]: e.target.value,
     });
+  };
+
+  const handleExportPdf = () => {
+    const doc = new jsPDF();
+    doc.text("Timeline Project Animasi", 14, 22);
+    doc.autoTable({
+      startY: 30,
+      head: [
+        [
+          "Nama Project",
+          "Tugas",
+          "Tanggal Mulai",
+          "Tanggal Selesai",
+          "Status",
+          "Catatan",
+          "Hasil Akhir",
+          "Dibuat Oleh",
+        ],
+      ],
+      body: data.map((item) => [
+        item.project,
+        item.tugas,
+        item.tanggalmulai,
+        item.tanggalselesai,
+        item.status,
+        item.catatan,
+        item.hasilakhir,
+        item.dibuatoleh,
+      ]),
+    });
+    doc.save("timeline.pdf");
   };
 
   const columns = [
@@ -242,6 +282,10 @@ const Timeline = ({ data, onEdit, onDelete }) => {
       <h2 className="text-center mb-4" style={styles.heading}>
         Timeline Project Animasi
       </h2>
+      <Button variant="primary" className="mb-4" onClick={handleExportPdf}>
+        <FaFilePdf className="me-2" />
+        Export ke PDF
+      </Button>
       <DataTable
         columns={columns}
         data={data}
