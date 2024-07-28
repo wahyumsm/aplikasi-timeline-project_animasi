@@ -1,156 +1,225 @@
-import React from "react";
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
-import { Button, Badge, Tooltip, OverlayTrigger } from "react-bootstrap";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { Button, Badge, Tooltip, OverlayTrigger, Form } from "react-bootstrap";
+import { FaEye, FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
 
 // Helper function to render status badge
 const statusBadge = (status) => {
   let variant;
   switch (status) {
     case "InProgress":
-      variant = "warning";
+      variant = "info";
       break;
     case "In-Waiting":
-      variant = "secondary";
+      variant = "warning";
       break;
     case "Completed":
       variant = "success";
       break;
     default:
-      variant = "light";
+      variant = "secondary";
   }
-  return <Badge variant={variant}>{status}</Badge>;
+  return <Badge bg={variant}>{status}</Badge>;
 };
 
-// Tooltips for action buttons
-const renderTooltip = (props) => (
-  <Tooltip id="button-tooltip" {...props}>
-    {props.children}
-  </Tooltip>
-);
-
 const Timeline = ({ data, setData }) => {
-  const handleDelete = (id) => {
-    setData(data.filter((item) => item.id !== id));
-  };
+  const [editRowId, setEditRowId] = useState(null);
+  const [editData, setEditData] = useState({});
 
   const handleEdit = (row) => {
-    // Implement edit functionality here
-    console.log("Edit:", row);
+    setEditRowId(row.id);
+    setEditData({ ...row });
   };
 
-  const handleView = (row) => {
-    // Implement view functionality here
-    console.log("View:", row);
+  const handleSave = () => {
+    setData((prevData) =>
+      prevData.map((item) => (item.id === editData.id ? editData : item))
+    );
+    setEditRowId(null);
+  };
+
+  const handleCancel = () => {
+    setEditRowId(null);
+  };
+
+  const handleChange = (e, field) => {
+    setEditData({
+      ...editData,
+      [field]: e.target.value,
+    });
   };
 
   const columns = [
     {
-      name: "PROJECT",
-      selector: (row) => row.project,
-      sortable: true,
-      wrap: true,
-    },
-    {
-      name: "DIBUAT OLEH",
-      selector: (row) => row.dibuatoleh,
-      sortable: true,
-    },
-    {
-      name: "STATUS",
-      selector: (row) => statusBadge(row.status),
+      name: "Nama Project",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Control
+            type="text"
+            value={editData.project}
+            onChange={(e) => handleChange(e, "project")}
+          />
+        ) : (
+          row.project
+        ),
       sortable: true,
     },
     {
-      name: "TUGAS",
-      selector: (row) => row.tugas,
+      name: "Tugas",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Control
+            type="text"
+            value={editData.tugas}
+            onChange={(e) => handleChange(e, "tugas")}
+          />
+        ) : (
+          row.tugas
+        ),
       sortable: true,
     },
     {
-      name: "TANGGAL MULAI",
-      selector: (row) => row.tanggalmulai,
+      name: "Tanggal Mulai",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Control
+            type="date"
+            value={editData.tanggalmulai}
+            onChange={(e) => handleChange(e, "tanggalmulai")}
+          />
+        ) : (
+          row.tanggalmulai
+        ),
       sortable: true,
     },
     {
-      name: "TANGGAL SELESAI",
-      selector: (row) => row.tanggalselesai,
+      name: "Tanggal Selesai",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Control
+            type="date"
+            value={editData.tanggalselesai}
+            onChange={(e) => handleChange(e, "tanggalselesai")}
+          />
+        ) : (
+          row.tanggalselesai
+        ),
       sortable: true,
     },
     {
-      name: "CATATAN",
-      selector: (row) => row.catatan,
-    },
-    {
-      name: "HASIL AKHIR",
-      selector: (row) => row.hasilakhir,
-    },
-    {
-      name: "LINK YOUTUBE TIKTOK",
-      cell: (row) => (
-        <a href={row.link} target="_blank" rel="noopener noreferrer">
-          View
-        </a>
-      ),
-    },
-    {
-      name: "ACTIONS",
-      cell: (row) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <OverlayTrigger
-            placement="top"
-            overlay={renderTooltip({ children: "View" })}
+      name: "Status",
+      selector: (row) =>
+        editRowId === row.id ? (
+          <Form.Select
+            value={editData.status}
+            onChange={(e) => handleChange(e, "status")}
           >
-            <Button
-              variant="info"
-              size="sm"
-              onClick={() => handleView(row)}
-              style={{ marginRight: "5px", color: "#007bff" }}
-            >
-              <FaEye />
-            </Button>
-          </OverlayTrigger>
-          <OverlayTrigger
-            placement="top"
-            overlay={renderTooltip({ children: "Edit" })}
-          >
-            <Button
-              variant="warning"
-              size="sm"
-              onClick={() => handleEdit(row)}
-              style={{ marginRight: "5px" }}
-            >
-              <FaEdit />
-            </Button>
-          </OverlayTrigger>
-          <OverlayTrigger
-            placement="top"
-            overlay={renderTooltip({ children: "Delete" })}
-          >
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => handleDelete(row.id)}
-            >
-              <FaTrash />
-            </Button>
-          </OverlayTrigger>
-        </div>
-      ),
+            <option value="InProgress">Sedang Berjalan</option>
+            <option value="In-Waiting">Menunggu</option>
+            <option value="Completed">Selesai</option>
+          </Form.Select>
+        ) : (
+          statusBadge(row.status)
+        ),
+      sortable: true,
+    },
+    {
+      name: "Aksi",
+      cell: (row) =>
+        editRowId === row.id ? (
+          <>
+            <OverlayTrigger placement="top" overlay={<Tooltip>Simpan</Tooltip>}>
+              <Button
+                style={{
+                  marginRight: "5px",
+                  fontSize: 14,
+                }}
+                variant="success"
+                size="sm"
+                className="p-0 me-2"
+                onClick={handleSave}
+              >
+                <FaSave style={{ color: "green" }} />
+                Simpan
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="top" overlay={<Tooltip>Batal</Tooltip>}>
+              <Button
+                style={{
+                  marginRight: "5px",
+                  fontSize: 14,
+                }}
+                variant="danger"
+                size="sm"
+                className="p-0"
+                onClick={handleCancel}
+              >
+                <FaTimes style={{ color: "red" }} />
+                Batal
+              </Button>
+            </OverlayTrigger>
+          </>
+        ) : (
+          <>
+            <OverlayTrigger placement="top" overlay={<Tooltip>Lihat</Tooltip>}>
+              <Button
+                style={{
+                  marginRight: "5px",
+                  fontSize: 14,
+                }}
+                variant="info"
+                size="sm"
+                className="p-0 me-2"
+                onClick={() => console.log("Lihat", row.id)}
+              >
+                <FaEye style={{ color: "blue" }} />
+                Lihat
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="top" overlay={<Tooltip>Edit</Tooltip>}>
+              <Button
+                style={{
+                  marginRight: "5px",
+                  fontSize: 14,
+                }}
+                variant="warning"
+                size="sm"
+                className="p-0 me-2"
+                onClick={() => handleEdit(row)}
+              >
+                <FaEdit style={{ color: "yellow" }} />
+                Edit
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="top" overlay={<Tooltip>Hapus</Tooltip>}>
+              <Button
+                style={{
+                  marginRight: "5px",
+                  fontSize: 14,
+                }}
+                variant="dark"
+                size="sm"
+                className="p-0"
+                onClick={() => console.log("Hapus", row.id)}
+              >
+                <FaTrash style={{ color: "black" }} />
+                Hapus
+              </Button>
+            </OverlayTrigger>
+          </>
+        ),
     },
   ];
 
   return (
-    <div className="timeline-table mt-4">
-      <DataTable
-        columns={columns}
-        data={data}
-        pagination
-        highlightOnHover
-        responsive
-        dense
-        noDataComponent="No data available"
-      />
-    </div>
+    <DataTable
+      columns={columns}
+      data={data}
+      pagination
+      highlightOnHover
+      pointerOnHover
+      responsive
+    />
   );
 };
 

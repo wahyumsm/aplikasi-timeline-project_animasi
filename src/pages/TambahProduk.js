@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const TambahProduk = ({ addData }) => {
   const [status, setStatus] = useState("");
   const [formData, setFormData] = useState({
     namaproduk: "",
-
     status: "",
     project: "",
     tugas: "",
@@ -16,6 +16,8 @@ const TambahProduk = ({ addData }) => {
     hasilakhir: "",
     dibuatoleh: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChangeSelected = (e) => {
     e.preventDefault();
@@ -29,17 +31,16 @@ const TambahProduk = ({ addData }) => {
 
   const handleSubmit = () => {
     const newItem = {
-      id: Date.now(), // or use a more sophisticated ID generation method
+      id: Date.now(),
       ...formData,
       status,
     };
     addData(newItem);
-    // Optionally, reset the form
+
+    // Reset form
     setFormData({
       namaproduk: "",
-      kategori: "",
-      harga: "",
-      stok: "",
+      status: "",
       project: "",
       tugas: "",
       tanggalmulai: "",
@@ -49,6 +50,12 @@ const TambahProduk = ({ addData }) => {
       dibuatoleh: "",
     });
     setStatus("");
+
+    // Display success alert
+    window.alert("Data berhasil ditambahkan!");
+
+    // Navigate to the timeline page
+    navigate("/timeline");
   };
 
   return (
@@ -65,7 +72,6 @@ const TambahProduk = ({ addData }) => {
       >
         <FaPlus style={{ marginRight: "10px" }} /> Tambah Project Animasi
       </h1>
-
       <div
         className="container"
         style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}
@@ -80,7 +86,6 @@ const TambahProduk = ({ addData }) => {
         >
           <Form>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-              {/* Other form fields */}
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="project">
                   <Form.Label style={{ marginRight: 9 }}>
@@ -103,14 +108,13 @@ const TambahProduk = ({ addData }) => {
                   />
                 </Form.Group>
               </div>
-
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="createdBy">
                   <Form.Label style={{ marginRight: 9 }}>Tugas</Form.Label>
                   <Form.Control
                     type="text"
                     name="tugas"
-                    placeholder="Masukkan Tugas "
+                    placeholder="Masukkan Tugas"
                     style={{
                       border: "1px solid #C4C4C4",
                       borderRadius: "4px",
@@ -124,7 +128,6 @@ const TambahProduk = ({ addData }) => {
                   />
                 </Form.Group>
               </div>
-
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="tanggalmulai">
                   <Form.Label style={{ marginRight: 9 }}>
@@ -146,7 +149,6 @@ const TambahProduk = ({ addData }) => {
                   />
                 </Form.Group>
               </div>
-
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="stok">
                   <Form.Label style={{ marginRight: 7 }}>Selesai</Form.Label>
@@ -166,7 +168,6 @@ const TambahProduk = ({ addData }) => {
                   />
                 </Form.Group>
               </div>
-
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="status">
                   <Form.Label>Status</Form.Label>
@@ -178,7 +179,7 @@ const TambahProduk = ({ addData }) => {
                       borderRadius: "4px",
                       padding: "10px",
                       fontSize: "14px",
-                      marginLeft: 60,
+                      marginLeft: 8,
                       backgroundColor: "rgba(128, 128, 128, 0.1)",
                       width: "70%",
                     }}
@@ -191,7 +192,6 @@ const TambahProduk = ({ addData }) => {
                   </Form.Control>
                 </Form.Group>
               </div>
-
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="catatan">
                   <Form.Label>Catatan</Form.Label>
@@ -213,7 +213,6 @@ const TambahProduk = ({ addData }) => {
                   />
                 </Form.Group>
               </div>
-
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="hasilakhir">
                   <Form.Label>Hasil Akhir</Form.Label>
@@ -226,7 +225,7 @@ const TambahProduk = ({ addData }) => {
                       borderRadius: "4px",
                       padding: "10px",
                       fontSize: "14px",
-                      marginLeft: 30,
+                      marginLeft: 8,
                       backgroundColor: "rgba(128, 128, 128, 0.1)",
                       width: "60%",
                     }}
@@ -235,7 +234,6 @@ const TambahProduk = ({ addData }) => {
                   />
                 </Form.Group>
               </div>
-
               <div style={{ flex: "1 1 45%" }}>
                 <Form.Group controlId="dibuatoleh">
                   <Form.Label>Dibuat Oleh</Form.Label>
@@ -258,7 +256,6 @@ const TambahProduk = ({ addData }) => {
                 </Form.Group>
               </div>
             </div>
-
             <Button
               onClick={handleSubmit}
               style={{

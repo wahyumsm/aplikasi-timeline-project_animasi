@@ -8,38 +8,42 @@ import StoryScriptList from "./pages/StoryScriptList";
 import "./App.css";
 
 const App = () => {
-  const [data, setData] = useState([]);
-  const [scripts, setScripts] = useState([]);
+  const [data, setData] = useState(() => {
+    const storedData = localStorage.getItem("projectData");
+    return storedData ? JSON.parse(storedData) : [];
+  });
+
+  const [scripts, setScripts] = useState(() => {
+    const storedScripts = localStorage.getItem("scripts");
+    return storedScripts ? JSON.parse(storedScripts) : [];
+  });
 
   useEffect(() => {
-    const storedScripts = localStorage.getItem("scripts");
-    if (storedScripts) {
-      setScripts(JSON.parse(storedScripts));
-    }
-  }, []);
+    localStorage.setItem("projectData", JSON.stringify(data));
+  }, [data]);
+
+  useEffect(() => {
+    localStorage.setItem("scripts", JSON.stringify(scripts));
+  }, [scripts]);
 
   const addData = (newItem) => {
-    setData([...data, newItem]);
+    const newItemWithId = { ...newItem, id: Date.now() }; // Ensure unique ID
+    setData((prevData) => [...prevData, newItemWithId]);
   };
 
   const addScript = (newScript) => {
-    const updatedScripts = [...scripts, newScript];
-    setScripts(updatedScripts);
-    localStorage.setItem("scripts", JSON.stringify(updatedScripts));
+    const newScriptWithId = { ...newScript, id: Date.now() }; // Ensure unique ID
+    setScripts((prevScripts) => [...prevScripts, newScriptWithId]);
   };
 
-  const deleteScript = (index) => {
-    const updatedScripts = scripts.filter((_, i) => i !== index);
-    setScripts(updatedScripts);
-    localStorage.setItem("scripts", JSON.stringify(updatedScripts));
+  const deleteData = (id) => {
+    setData((prevData) => prevData.filter((item) => item.id !== id));
   };
 
-  const updateScript = (id, updatedData) => {
-    const updatedScripts = scripts.map((script, index) =>
-      index === id ? { ...script, ...updatedData } : script
+  const deleteScript = (id) => {
+    setScripts((prevScripts) =>
+      prevScripts.filter((script) => script.id !== id)
     );
-    setScripts(updatedScripts);
-    localStorage.setItem("scripts", JSON.stringify(updatedScripts));
   };
 
   return (
@@ -68,7 +72,6 @@ const App = () => {
                   <StoryScriptList
                     scripts={scripts}
                     deleteScript={deleteScript}
-                    updateScript={updateScript}
                   />
                 </>
               }
