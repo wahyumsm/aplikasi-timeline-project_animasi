@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaFilePdf } from "react-icons/fa";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const renderTooltip = (props) => (
@@ -31,6 +33,24 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
   const handleCancel = () => {
     setEditRowId(null);
     setEditData({});
+  };
+
+  const exportToPdf = () => {
+    const doc = new jsPDF();
+    doc.text("Daftar Script Cerita", 14, 16);
+    doc.autoTable({
+      head: [["No", "Judul", "Konten"]],
+      body: scripts.map((script, index) => [
+        index + 1,
+        script.title,
+        script.content,
+      ]),
+      startY: 20,
+      styles: {
+        fontSize: 10,
+      },
+    });
+    doc.save("story_scripts.pdf");
   };
 
   const columns = [
@@ -171,17 +191,36 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
         transition: "all 0.3s ease-in-out",
       }}
     >
-      <h2
+      <div
         style={{
-          textAlign: "center",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           marginBottom: "20px",
-          color: "#1baa75",
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-          fontWeight: "700",
         }}
       >
-        Daftar Script Cerita
-      </h2>
+        <h2
+          style={{
+            textAlign: "center",
+            color: "#1baa75",
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            fontWeight: "700",
+          }}
+        >
+          Daftar Script Cerita
+        </h2>
+        <Button
+          variant="primary"
+          onClick={exportToPdf}
+          style={{
+            backgroundColor: "#007bff",
+            borderColor: "#007bff",
+            boxShadow: "0 2px 6px rgba(0, 123, 255, 0.5)",
+          }}
+        >
+          <FaFilePdf /> Export ke PDF
+        </Button>
+      </div>
       <DataTable
         columns={columns}
         data={scripts}
