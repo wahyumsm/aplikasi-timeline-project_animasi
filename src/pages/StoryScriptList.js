@@ -43,10 +43,13 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
   };
 
   const exportToPdf = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
     doc.text("Daftar Script Cerita", 14, 16);
 
-    // Define table columns and data
     const columns = ["No", "Judul", "Konten", "Gambar"];
     const data = scripts.map((script, index) => [
       index + 1,
@@ -57,7 +60,6 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
         : "Tidak ada gambar",
     ]);
 
-    // Add the table to the PDF
     doc.autoTable({
       head: [columns],
       body: data,
@@ -68,10 +70,10 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
         cellPadding: 4,
       },
       columnStyles: {
-        0: { halign: "center" },
-        1: { valign: "middle" },
-        2: { valign: "middle", cellWidth: "wrap" },
-        3: { valign: "middle", cellWidth: 40 },
+        0: { halign: "center", cellWidth: 10 },
+        1: { valign: "middle", cellWidth: 40 },
+        2: { valign: "middle", cellWidth: 80 },
+        3: { valign: "middle", cellWidth: 50 },
       },
       didDrawCell: (data) => {
         if (data.column.index === 3 && data.cell.raw.image) {
@@ -87,7 +89,6 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
       },
     });
 
-    // Save the PDF
     doc.save("story_scripts.pdf");
   };
 
@@ -318,20 +319,18 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
               width={250}
               height={250}
               border={50}
-              color={[0, 0, 0, 0.6]} // RGBA
+              color={[255, 255, 255, 0.6]}
               scale={1.2}
               rotate={0}
-              onLoadFailure={() => console.log("Gagal memuat gambar")}
-              onLoadSuccess={() => console.log("Gambar berhasil dimuat")}
             />
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowCropModal(false)}>
-            Tutup
-          </Button>
           <Button variant="primary" onClick={handleCropComplete}>
             Simpan
+          </Button>
+          <Button variant="secondary" onClick={() => setShowCropModal(false)}>
+            Batal
           </Button>
         </Modal.Footer>
       </Modal>
