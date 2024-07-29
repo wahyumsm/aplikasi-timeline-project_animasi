@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { FaTrash, FaEdit, FaFilePdf, FaTrashAlt } from "react-icons/fa";
+import { FaTrash, FaEdit, FaFilePdf } from "react-icons/fa";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -105,21 +105,6 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
       },
     },
     {
-      name: "Gambar",
-      selector: (row) =>
-        row.image ? (
-          <img
-            src={row.image}
-            alt="Preview"
-            style={{ maxWidth: "100px", maxHeight: "50px", objectFit: "cover" }}
-          />
-        ) : (
-          "Tidak ada gambar"
-        ),
-      center: true,
-      width: "120px",
-    },
-    {
       name: "Aksi",
       cell: (row, index) =>
         editRowId === index ? (
@@ -184,13 +169,13 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
                   boxShadow: "0 2px 6px rgba(220, 53, 69, 0.5)",
                 }}
               >
-                <FaTrashAlt />
+                <FaTrash />
               </Button>
             </OverlayTrigger>
           </div>
         ),
       center: true,
-      width: "120px",
+      width: "160px",
     },
   ];
 

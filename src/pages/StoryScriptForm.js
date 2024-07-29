@@ -20,18 +20,11 @@ Judul: [Masukkan Judul Animasi]
 
 Tambahkan lebih banyak scene sesuai kebutuhan Anda.
 `);
-  const [image, setImage] = useState(null);
-
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setImage(URL.createObjectURL(e.target.files[0]));
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title && content) {
-      const newScript = { title, content, image };
+      const newScript = { title, content };
       addScript(newScript);
       setTitle("");
       setContent(`Contoh Template Storyboard Animasi:
@@ -51,7 +44,6 @@ Judul: [Masukkan Judul Animasi]
 
 Tambahkan lebih banyak scene sesuai kebutuhan Anda.
 `);
-      setImage(null);
     }
   };
 
@@ -113,36 +105,6 @@ Tambahkan lebih banyak scene sesuai kebutuhan Anda.
               height: "auto",
             }}
           />
-        </Form.Group>
-        <Form.Group>
-          <Form.Label style={{ fontWeight: "bold", color: "#555" }}>
-            Gambar
-          </Form.Label>
-          <Form.Control
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{
-              border: "1px solid #C4C4C4",
-              borderRadius: "4px",
-              padding: "10px",
-              fontSize: "14px",
-              marginBottom: "20px",
-            }}
-          />
-          {image && (
-            <div style={{ textAlign: "center", marginTop: "10px" }}>
-              <img
-                src={image}
-                alt="Preview"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "200px",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
-          )}
         </Form.Group>
         <Button
           variant="primary"
