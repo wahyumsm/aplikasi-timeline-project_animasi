@@ -21,7 +21,7 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
   const [showCropModal, setShowCropModal] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const [crop, setCrop] = useState({ unit: "%", width: 30, height: 30 });
-  const [editedScript, setEditedScript] = useState(null);
+  const [editedImage, setEditedImage] = useState(null);
 
   const handleEditClick = (row, rowIndex) => {
     setEditRowId(rowIndex);
@@ -33,10 +33,8 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
   };
 
   const handleSave = () => {
-    if (editRowId !== null) {
-      updateScript(editRowId, { ...editData, image: currentImage });
-      setEditRowId(null);
-    }
+    updateScript(editRowId, editData);
+    setEditRowId(null);
   };
 
   const handleCancel = () => {
@@ -48,6 +46,7 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
     const doc = new jsPDF();
     doc.text("Daftar Script Cerita", 14, 16);
 
+    // Define table columns and data
     const columns = ["No", "Judul", "Konten", "Gambar"];
     const data = scripts.map((script, index) => [
       index + 1,
@@ -58,6 +57,7 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
         : "Tidak ada gambar",
     ]);
 
+    // Add the table to the PDF
     doc.autoTable({
       head: [columns],
       body: data,
@@ -87,6 +87,7 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
       },
     });
 
+    // Save the PDF
     doc.save("story_scripts.pdf");
   };
 
@@ -101,11 +102,7 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
   };
 
   const handleCropComplete = () => {
-    if (editRowId !== null) {
-      const updatedScripts = [...scripts];
-      updatedScripts[editRowId].image = currentImage;
-      setEditedScript(updatedScripts);
-    }
+    setEditedImage(currentImage); // Set the edited image to the current image
     setShowCropModal(false);
   };
 
@@ -321,17 +318,17 @@ const StoryScriptList = ({ scripts, deleteScript, updateScript }) => {
               width={250}
               height={250}
               border={50}
-              color={[255, 255, 255, 0.6]} // RGBA
+              color={[0, 0, 0, 0.6]} // RGBA
               scale={1.2}
               rotate={0}
-              borderRadius={125}
-              onImageChange={(image) => setCurrentImage(image)}
+              onLoadFailure={() => console.log("Gagal memuat gambar")}
+              onLoadSuccess={() => console.log("Gambar berhasil dimuat")}
             />
           )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowCropModal(false)}>
-            Batal
+            Tutup
           </Button>
           <Button variant="primary" onClick={handleCropComplete}>
             Simpan
