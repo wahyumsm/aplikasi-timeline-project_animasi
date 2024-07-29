@@ -120,6 +120,7 @@ const Timeline = ({ data, onEdit, onDelete }) => {
       startY: 30,
       head: [
         [
+          "No",
           "Nama Project",
           "Tugas",
           "Tanggal Mulai",
@@ -130,7 +131,8 @@ const Timeline = ({ data, onEdit, onDelete }) => {
           "Dibuat Oleh",
         ],
       ],
-      body: data.map((item) => [
+      body: data.map((item, index) => [
+        index + 1,
         item.project,
         item.tugas,
         item.tanggalmulai,
@@ -145,6 +147,12 @@ const Timeline = ({ data, onEdit, onDelete }) => {
   };
 
   const columns = [
+    {
+      name: "No",
+      selector: (row, index) => index + 1,
+      sortable: false,
+      width: "50px",
+    },
     {
       name: "Nama Project",
       selector: (row) =>
