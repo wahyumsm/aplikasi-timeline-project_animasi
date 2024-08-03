@@ -87,6 +87,13 @@ const actionButtons = (row, isEditing, onEdit, onSave, onCancel, onDelete) => (
   </>
 );
 
+const calculateDuration = (startDate, endDate) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const duration = (end - start) / (1000 * 60 * 60 * 24);
+  return Math.round(duration);
+};
+
 const Timeline = ({ data, onEdit, onDelete }) => {
   const [editRowId, setEditRowId] = useState(null);
   const [editData, setEditData] = useState({});
@@ -125,6 +132,7 @@ const Timeline = ({ data, onEdit, onDelete }) => {
           "Tugas",
           "Tanggal Mulai",
           "Tanggal Selesai",
+          "Durasi (Hari)",
           "Status",
           "Catatan",
           "Hasil Akhir",
@@ -137,6 +145,7 @@ const Timeline = ({ data, onEdit, onDelete }) => {
         item.tugas,
         item.tanggalmulai,
         item.tanggalselesai,
+        calculateDuration(item.tanggalmulai, item.tanggalselesai),
         item.status,
         item.catatan,
         item.hasilakhir,
@@ -207,6 +216,12 @@ const Timeline = ({ data, onEdit, onDelete }) => {
         ) : (
           row.tanggalselesai
         ),
+      sortable: true,
+    },
+    {
+      name: "Durasi (Hari)",
+      selector: (row) =>
+        calculateDuration(row.tanggalmulai, row.tanggalselesai),
       sortable: true,
     },
     {
@@ -319,27 +334,22 @@ const styles = {
 const customStyles = {
   rows: {
     style: {
-      minHeight: "50px",
-      "&:nth-of-type(even)": {
-        backgroundColor: "#f9f9f9",
-      },
+      fontSize: "16px",
+      padding: "10px 20px",
+      borderBottom: "1px solid #ddd",
     },
   },
   headCells: {
     style: {
-      fontSize: "16px",
+      fontSize: "18px",
       fontWeight: "bold",
-      backgroundColor: "#f5f5f5",
-      color: "#333",
-      paddingLeft: "16px",
-      paddingRight: "16px",
+      backgroundColor: "#f4f4f4",
+      padding: "12px 20px",
     },
   },
   cells: {
     style: {
-      fontSize: "14px",
-      paddingLeft: "16px",
-      paddingRight: "16px",
+      padding: "10px 20px",
     },
   },
 };
